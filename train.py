@@ -14,6 +14,10 @@ from keras.callbacks import EarlyStopping
 from keras.layers import Conv2D, Reshape, Activation
 from keras.models import Model
 
+# for the cudnn campatible
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -133,6 +137,13 @@ def train(batch, epochs, num_classes, size, weights, tclasses):
         weights, String, The pre_trained model weights.
         tclasses, Integer, The number of classes of pre-trained model.
     """
+
+    # For the CuDnn compatible
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    config.log_device_placement = True
+    sess = tf.Session(config=config)
+    set_session(sess)
 
     train_generator, validation_generator, count1, count2 = generate(batch, size)
 
